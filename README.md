@@ -1,4 +1,4 @@
-# rust-thebook
+# learn-rust
 
 - Learn Rust with following teaching materials.
   - [The Rust Programming Language(The Book)](https://doc.rust-lang.org/book/) ([日本語訳](https://doc.rust-jp.rs/book-ja/))
