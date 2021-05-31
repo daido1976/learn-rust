@@ -8,3 +8,5 @@ edition = "2018"
 
 [dependencies]
 actix-web = "3.3.2"
+askama = "0.10.5"
+thiserror = "1.0.25"

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TodoWeb</title>
+  </head>
+  <body>
+    <div>
+      {% for entry in entries %}
+      <div>id: {{entry.id}}, text: {{entry.text}}</div>
+      <form action="/delete" method="post">
+        <input type="hidden" name="id" value="{{entry.id}}" />
+        <button>delete</button>
+      </form>
+      {% endfor %}
+    </div>
+
+    <form action="/add" method="post">
+      <div><input name="text" /></div>
+      <div><button>add</button></div>
+    </form>
+  </body>
+</html>
