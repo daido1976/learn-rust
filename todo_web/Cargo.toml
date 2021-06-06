@@ -1,18 +1,18 @@
 [package]
-name = "todo_web"
-version = "0.1.0"
 authors = ["Daido Shota <daido1976@gmail.com>"]
 edition = "2018"
+name = "todo_web"
+version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 actix-web = "3.3.2"
 askama = "0.10.5"
-thiserror = "1.0.25"
-r2d2_sqlite = "0.18.0"
 r2d2 = "0.8.9"
+r2d2_sqlite = "0.18.0"
+thiserror = "1.0.25"
 
 [dependencies.rusqlite]
-version = "0.25.1"
 features = ["bundled"]
+version = "0.25.1"
