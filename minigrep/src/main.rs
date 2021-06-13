@@ -1,4 +1,4 @@
-use std::{env, fs::File, io::Read, process};
+use std::{env, error::Error, fs::File, io::Read, process};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -7,16 +7,23 @@ fn main() {
         process::exit(1);
     });
 
-    run(config);
+    match run(config) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("Application error: {}", e);
+            process::exit(1);
+        }
+    }
 }
 
-fn run(config: Config) {
-    let mut file = File::open(config.file_name).expect("file not found!");
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    let mut file = File::open(config.file_name)?;
     let mut contents = String::new();
 
-    file.read_to_string(&mut contents)
-        .expect("something went wrong reading the file!");
+    file.read_to_string(&mut contents)?;
     println!("{:?}", contents);
+
+    Ok(())
 }
 
 struct Config {
