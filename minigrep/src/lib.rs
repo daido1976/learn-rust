@@ -1,13 +1,17 @@
-use std::{error::Error, fs::File, io::Read};
+use std::{env, error::Error, fs::File, io::Read};
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut file = File::open(config.file_name)?;
     let mut contents = String::new();
 
     file.read_to_string(&mut contents)?;
-    search(&config.query, &contents)
-        .iter()
-        .for_each(|line| println!("{}", line));
+
+    let results = if config.case_sensitive {
+        search(&config.query, &contents)
+    } else {
+        search_case_insensitive(&config.query, &contents)
+    };
+    results.iter().for_each(|line| println!("{}", line));
 
     Ok(())
 }
@@ -15,6 +19,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 pub struct Config {
     query: String,
     file_name: String,
+    case_sensitive: bool,
 }
 
 impl Config {
@@ -24,8 +29,13 @@ impl Config {
         }
         let query = args[1].clone();
         let file_name = args[2].clone();
+        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 
-        Ok(Config { query, file_name })
+        Ok(Config {
+            query,
+            file_name,
+            case_sensitive,
+        })
     }
 }
 
