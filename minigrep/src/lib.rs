@@ -5,9 +5,9 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut contents = String::new();
 
     file.read_to_string(&mut contents)?;
-    for line in search(&config.query, &contents) {
-        println!("{}", line)
-    }
+    search(&config.query, &contents)
+        .iter()
+        .for_each(|line| println!("{}", line));
 
     Ok(())
 }
@@ -30,14 +30,10 @@ impl Config {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line)
-        }
-    }
-
-    return results;
+    contents
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 #[cfg(test)]
