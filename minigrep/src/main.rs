@@ -1,9 +1,11 @@
-use core::panic;
-use std::{env, fs::File, io::Read};
+use std::{env, fs::File, io::Read, process};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let config = Config::new(&args);
+    let config = Config::new(&args).unwrap_or_else(|err| {
+        println!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
 
     let mut file = File::open(config.file_name).expect("file not found!");
     let mut contents = String::new();
@@ -19,13 +21,13 @@ struct Config {
 }
 
 impl Config {
-    fn new(args: &[String]) -> Config {
+    fn new(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
-            panic!("not enough arguments!")
+            return Err("not enough arguments!");
         }
         let query = args[1].clone();
         let file_name = args[2].clone();
 
-        Config { query, file_name }
+        Ok(Config { query, file_name })
     }
 }
