@@ -2,6 +2,7 @@ use nix::sys::wait::*;
 use nix::unistd::*;
 use std::ffi::CString;
 use std::io;
+use std::io::Write;
 use std::path::*;
 use std::str::FromStr;
 use Status::Success;
@@ -23,6 +24,8 @@ impl LshLoop {
 
     fn start(&self) -> Result<Status, LshError> {
         loop {
+            print!("lsh:$ ");
+            io::stdout().flush().unwrap();
             let mut s = String::new();
             let scan = io::stdin();
             let _ = scan.read_line(&mut s);
