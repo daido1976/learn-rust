@@ -7,6 +7,10 @@ fn main() {
         process::exit(1);
     });
 
+    run(config);
+}
+
+fn run(config: Config) {
     let mut file = File::open(config.file_name).expect("file not found!");
     let mut contents = String::new();
 
