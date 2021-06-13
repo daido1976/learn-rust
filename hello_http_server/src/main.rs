@@ -39,4 +39,5 @@ fn handle_connection(mut stream: TcpStream) {
 
     stream.write(response.as_bytes()).unwrap();
     stream.flush().unwrap();
+    // https://doc.rust-jp.rs/book-ja/ch20-02-multithreaded.html から再開
 }
