@@ -9,8 +9,10 @@ version = "0.1.0"
 [dependencies]
 actix-web = "3.3.2"
 askama = "0.10.5"
+env_logger = "0.8.4"
 r2d2 = "0.8.9"
 r2d2_sqlite = "0.18.0"
+serde = "1.0.126"
 thiserror = "1.0.25"
 
 [dependencies.rusqlite]
