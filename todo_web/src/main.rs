@@ -19,13 +19,13 @@ struct IndexTemplate {
 #[derive(Debug, Error)]
 enum MyError {
     #[error("Failed to render HTML")]
-    AskamaError(#[from] askama::Error),
+    Askama(#[from] askama::Error),
 
     #[error("Failed to get connection")]
-    ConnectionPoolError(#[from] r2d2::Error),
+    ConnectionPool(#[from] r2d2::Error),
 
     #[error("Failed to sql exectionion")]
-    SqliteError(#[from] rusqlite::Error),
+    Sqlite(#[from] rusqlite::Error),
 }
 impl ResponseError for MyError {}
 
