@@ -14,10 +14,13 @@ fn main() {
     let pool = ThreadPool::new(4);
     println!("start listening on {}", addr);
 
-    for stream in listner.incoming() {
+    // `.take(2)` for debug.
+    for stream in listner.incoming().take(2) {
         let stream = stream.unwrap();
         pool.execute(|| handle_connection(stream))
     }
+
+    println!("Shutting down.");
 }
 
 #[allow(clippy::unused_io_amount)]
