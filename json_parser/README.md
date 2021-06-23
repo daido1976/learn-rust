@@ -1,0 +1,3 @@
+- [Writing a simple JSON parser \| notes\.eatonphil\.com](https://notes.eatonphil.com/writing-a-simple-json-parser.html)
+- [Building a JSON Parser and Query Tool with Golang \| Medium](https://medium.com/@bradford_hamilton/building-a-json-parser-and-query-tool-with-go-8790beee239a)
+- https://github.com/Byron/json-tools
