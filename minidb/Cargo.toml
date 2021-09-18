@@ -1,5 +1,5 @@
 [package]
-name = "mini_rdbms"
+name = "minidb"
 version = "0.1.0"
 authors = ["daido1976 <daido1976@gmail.com>"]
 edition = "2018"
