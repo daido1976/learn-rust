@@ -9,7 +9,7 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
     #[test]
     fn test_lex() {
         // let s = "{\"foo\": [1, 2, {\"bar\": 2}]}".to_string();
