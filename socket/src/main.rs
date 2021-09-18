@@ -4,6 +4,7 @@ extern crate pretty_env_logger;
 #[macro_use]
 extern crate log;
 
+mod tcp_client;
 mod tcp_server;
 
 fn main() {
@@ -22,7 +23,7 @@ fn main() {
                 tcp_server::serve(address).unwrap_or_else(|e| error!("{}", e));
             }
             "client" => {
-                // todo: implement client
+                tcp_client::connect(address).unwrap_or_else(|e| error!("{}", e));
             }
             _ => exit_with("Please specify server or client on the 2nd argument."),
         },
