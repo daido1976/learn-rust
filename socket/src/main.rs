@@ -1,8 +1,14 @@
 use std::env;
 
+extern crate pretty_env_logger;
+#[macro_use]
+extern crate log;
+
+mod tcp_server;
+
 fn main() {
     env::set_var("RUST_LOG", "debug");
-    env_logger::init();
+    pretty_env_logger::init();
     let args: Vec<String> = env::args().collect();
     if args.len() != 4 {
         exit_with("Please specify [tcp|udp] [server|client] [addr:port]");
@@ -13,7 +19,7 @@ fn main() {
     match protocol {
         "tcp" => match role {
             "server" => {
-                // todo: implement server
+                tcp_server::serve(address).unwrap_or_else(|e| error!("{}", e));
             }
             "client" => {
                 // todo: implement client
@@ -33,8 +39,8 @@ fn main() {
     }
 }
 
-/// Print error with passed str and Exit.
+/// Print error log with passed str and Exit.
 fn exit_with(str: &str) {
-    eprintln!("{}", str);
+    error!("{}", str);
     std::process::exit(1);
 }
