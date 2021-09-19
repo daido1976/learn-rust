@@ -9,7 +9,7 @@ pub fn connect(addr: &str) -> Result<()> {
     let mut stream = TcpStream::connect(addr)?;
     loop {
         let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
+        io::stdin().read_line(&mut input)?;
         stream.write_all(input.as_bytes())?;
 
         let mut reader = BufReader::new(&stream);
