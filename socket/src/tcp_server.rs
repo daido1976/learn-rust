@@ -30,6 +30,7 @@ fn handler(mut stream: TcpStream) -> Result<()> {
             .trim()
             .to_string();
         debug!("received request: {}", req);
+
         let res = format!("{}!!!\n", req);
         stream.write_all(res.as_bytes())?;
     }

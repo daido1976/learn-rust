@@ -10,6 +10,7 @@ pub fn serve(addr: &str) -> Result<()> {
         debug!("received {} bytes from {}", size, src);
         let req = String::from_utf8_lossy(&buffer[..size]).trim().to_string();
         debug!("received request: {}", req);
+
         let res = format!("{}!!!\n", req);
         server_socket.send_to(res.as_bytes(), &src)?;
     }
