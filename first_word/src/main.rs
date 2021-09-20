@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 fn main() {
     let s = String::from("hello world");
     let word1 = first_word1(&s);
@@ -22,6 +24,16 @@ fn first_word2(s: &str) -> &str {
     result.unwrap()
 }
 
+fn _count_word(s: &str) -> HashMap<&str, i32> {
+    let mut result: HashMap<&str, i32> = HashMap::new();
+
+    s.split_whitespace().into_iter().for_each(|word| {
+        let count = result.entry(word).or_insert(0);
+        *count += 1;
+    });
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -34,5 +46,15 @@ mod tests {
     fn test_first_word2() {
         let s = "hello world".to_string();
         assert_eq!("hello".to_string(), first_word2(&s));
+    }
+
+    #[test]
+    fn test_count_word() {
+        let s = "no rust no life".to_string();
+        let mut expected: HashMap<&str, i32> = HashMap::new();
+        expected.insert("no", 2);
+        expected.insert("rust", 1);
+        expected.insert("life", 1);
+        assert_eq!(expected, _count_word(&s));
     }
 }
