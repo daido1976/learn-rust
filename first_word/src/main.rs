@@ -25,13 +25,13 @@ fn first_word2(s: &str) -> &str {
 }
 
 fn _count_word(s: &str) -> HashMap<&str, i32> {
-    let mut result: HashMap<&str, i32> = HashMap::new();
-
-    s.split_whitespace().into_iter().for_each(|word| {
-        let count = result.entry(word).or_insert(0);
-        *count += 1;
-    });
-    result
+    s.split_whitespace()
+        .into_iter()
+        .fold(HashMap::new(), |mut acc, word| {
+            let count = acc.entry(word).or_insert(0);
+            *count += 1;
+            acc
+        })
 }
 
 #[cfg(test)]
