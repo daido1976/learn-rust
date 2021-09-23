@@ -4,6 +4,7 @@ use std::{
     path::Path,
 };
 
+#[derive(Hash, Copy, Clone, PartialEq, Eq)]
 pub struct PageId(pub u64);
 
 impl PageId {

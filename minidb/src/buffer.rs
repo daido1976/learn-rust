@@ -1,6 +1,7 @@
 use crate::disk::{DiskManager, PageId};
+use anyhow::Result;
 use std::{
-    cell::RefCell,
+    cell::{Cell, RefCell},
     collections::HashMap,
     ops::{Index, IndexMut},
     rc::Rc,
@@ -16,7 +17,7 @@ pub struct BufferId(usize);
 pub struct Buffer {
     pub page_id: PageId,
     pub page: RefCell<Page>,
-    pub is_dirty: bool,
+    pub is_dirty: Cell<bool>,
 }
 
 pub struct Frame {
@@ -87,5 +88,42 @@ impl IndexMut<BufferId> for BufferPool {
 pub struct BufferPoolManager {
     disk: DiskManager,
     pool: BufferPool,
-    page_table: HashMap<String, Buffer>,
+    page_table: HashMap<PageId, BufferId>,
+}
+
+impl BufferPoolManager {
+    fn fetch_page(&mut self, page_id: PageId) -> Result<Rc<Buffer>> {
+        // ページがバッファプールにある場合
+        if let Some(&buffer_id) = self.page_table.get(&page_id) {
+            let frame = &mut self.pool[buffer_id];
+            frame.usage_count += 1;
+            return Ok(Rc::clone(&frame.buffer));
+        }
+        // ページがバッファプールにない場合
+        // 1. これから読み込むページの格納するバッファ（捨てるバッファ）を探す
+        let buffer_id = self
+            .pool
+            .evict()
+            .ok_or_else(|| anyhow::anyhow!("BufferPool is full"))?;
+        let frame = &mut self.pool[buffer_id];
+        let evict_page_id = frame.buffer.page_id;
+        {
+            let buffer = Rc::get_mut(&mut frame.buffer).unwrap();
+            // 2. is_dirty が true なら、バッファのページをディスクに書き込む
+            if buffer.is_dirty.get() {
+                self.disk
+                    .write_page_data(evict_page_id, buffer.page.get_mut())?;
+            }
+            buffer.page_id = page_id;
+            buffer.is_dirty.set(false);
+            // 3. ページを読み出す
+            self.disk.read_page_data(page_id, buffer.page.get_mut())?;
+            frame.usage_count = 1;
+        }
+        let page = Rc::clone(&frame.buffer);
+        // 4. バッファに入ってるページが入れ替わったので、ページテーブルを更新する
+        self.page_table.remove(&evict_page_id);
+        self.page_table.insert(page_id, buffer_id);
+        Ok(page)
+    }
 }
