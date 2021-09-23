@@ -91,8 +91,14 @@ async fn todo_update(
 }
 
 #[delete("/todos/{id}")]
-async fn todo_delete(_req: HttpRequest) -> impl Responder {
-    HttpResponse::Ok().body("unimplemented!")
+async fn todo_delete(web::Path(id): web::Path<u32>) -> Result<HttpResponse> {
+    let mut todos = fetch_current_todos()?;
+
+    // delete todo
+    todos.retain(|todo| todo.id != id);
+
+    persist(todos)?;
+    Ok(HttpResponse::Ok().json("{}"))
 }
 
 #[actix_web::main]
