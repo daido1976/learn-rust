@@ -30,9 +30,9 @@ fn fetch_current_todos() -> Result<Vec<Todo>> {
 }
 
 /// persist by writing todos to json file
-fn persist(todos: Vec<Todo>) -> Result<()> {
+fn persist(todos: &[Todo]) -> Result<()> {
     let file = File::create(TODO_FILE_NAME)?;
-    serde_json::to_writer_pretty(&file, &todos)?;
+    serde_json::to_writer_pretty(&file, todos)?;
     Ok(())
 }
 
@@ -61,7 +61,7 @@ async fn todo_create(params: web::Json<TodoParams>) -> Result<HttpResponse> {
     };
     todos.push(new_todo.clone());
 
-    persist(todos)?;
+    persist(&todos)?;
     Ok(HttpResponse::Ok().json(new_todo))
 }
 
@@ -83,7 +83,7 @@ async fn todo_update(
         })
         .unwrap();
 
-    persist(todos.clone())?;
+    persist(&todos)?;
 
     // find updated todo
     let updated_todo = todos.iter().find(|todo| todo.id == id).unwrap();
@@ -97,7 +97,7 @@ async fn todo_delete(web::Path(id): web::Path<u32>) -> Result<HttpResponse> {
     // delete todo
     todos.retain(|todo| todo.id != id);
 
-    persist(todos)?;
+    persist(&todos)?;
     Ok(HttpResponse::Ok().json("{}"))
 }
 
