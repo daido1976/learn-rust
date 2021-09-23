@@ -1,4 +1,18 @@
-use actix_web::{delete, get, patch, post, App, HttpRequest, HttpResponse, HttpServer, Responder};
+use std::{fs::File, io::BufReader};
+
+use actix_web::{
+    delete, get, patch, post, App, HttpRequest, HttpResponse, HttpServer, Responder, Result,
+};
+use serde::{Deserialize, Serialize};
+
+const TODO_FILE_NAME: &str = "todo.json";
+
+#[derive(Serialize, Deserialize, Debug)]
+struct Todo {
+    id: u32,
+    title: String,
+    body: String,
+}
 
 #[get("/")]
 async fn greet(_req: HttpRequest) -> impl Responder {
@@ -6,8 +20,11 @@ async fn greet(_req: HttpRequest) -> impl Responder {
 }
 
 #[get("/todos")]
-async fn todo_index(_req: HttpRequest) -> impl Responder {
-    HttpResponse::Ok().body("unimplemented!")
+async fn todo_index(_req: HttpRequest) -> Result<HttpResponse> {
+    let file = File::open(TODO_FILE_NAME)?;
+    let reader = BufReader::new(file);
+    let todos: Vec<Todo> = serde_json::from_reader(reader)?;
+    Ok(HttpResponse::Ok().json(todos))
 }
 
 #[post("/todos")]
