@@ -21,11 +21,19 @@ struct TodoParams {
     body: String,
 }
 
+/// fetch current todos from json file
 fn fetch_current_todos() -> Result<Vec<Todo>> {
     let file = File::open(TODO_FILE_NAME)?;
     let reader = BufReader::new(file);
     let todos: Vec<Todo> = serde_json::from_reader(reader)?;
     Ok(todos)
+}
+
+/// persist by writing todos to json file
+fn persist(todos: Vec<Todo>) -> Result<()> {
+    let file = File::create(TODO_FILE_NAME)?;
+    serde_json::to_writer_pretty(&file, &todos)?;
+    Ok(())
 }
 
 #[get("/")]
@@ -45,7 +53,7 @@ async fn todo_create(params: web::Json<TodoParams>) -> Result<HttpResponse> {
     let param_todo = params.into_inner();
 
     // build new_todos
-    let new_id = todos.len();
+    let new_id = todos.len() + 1;
     let new_todo = Todo {
         id: new_id as u32,
         title: param_todo.title,
@@ -53,16 +61,33 @@ async fn todo_create(params: web::Json<TodoParams>) -> Result<HttpResponse> {
     };
     todos.push(new_todo.clone());
 
-    // write to file
-    let file = File::create(TODO_FILE_NAME)?;
-    serde_json::to_writer_pretty(&file, &todos)?;
-
+    persist(todos)?;
     Ok(HttpResponse::Ok().json(new_todo))
 }
 
 #[patch("/todos/{id}")]
-async fn todo_update(_req: HttpRequest) -> impl Responder {
-    HttpResponse::Ok().body("unimplemented!")
+async fn todo_update(
+    web::Path(id): web::Path<u32>,
+    params: web::Json<TodoParams>,
+) -> Result<HttpResponse> {
+    let mut todos = fetch_current_todos()?;
+    let param_todo = params.into_inner();
+
+    // update todos
+    todos
+        .iter_mut()
+        .find(|todo| todo.id == id)
+        .map(|todo| {
+            todo.title = param_todo.title;
+            todo.body = param_todo.body;
+        })
+        .unwrap();
+
+    persist(todos.clone())?;
+
+    // find updated todo
+    let updated_todo = todos.iter().find(|todo| todo.id == id).unwrap();
+    Ok(HttpResponse::Ok().json(updated_todo))
 }
 
 #[delete("/todos/{id}")]
