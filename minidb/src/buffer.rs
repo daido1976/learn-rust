@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use crate::disk::{DiskManager, PageId};
 use anyhow::Result;
 use std::{
