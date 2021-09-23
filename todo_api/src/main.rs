@@ -1,17 +1,31 @@
-use std::{fs::File, io::BufReader};
+use std::{env, fs::File, io::BufReader};
 
 use actix_web::{
-    delete, get, patch, post, App, HttpRequest, HttpResponse, HttpServer, Responder, Result,
+    delete, get, middleware, patch, post, web, App, HttpRequest, HttpResponse, HttpServer,
+    Responder, Result,
 };
 use serde::{Deserialize, Serialize};
 
 const TODO_FILE_NAME: &str = "todo.json";
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 struct Todo {
     id: u32,
     title: String,
     body: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct TodoParams {
+    title: String,
+    body: String,
+}
+
+fn fetch_current_todos() -> Result<Vec<Todo>> {
+    let file = File::open(TODO_FILE_NAME)?;
+    let reader = BufReader::new(file);
+    let todos: Vec<Todo> = serde_json::from_reader(reader)?;
+    Ok(todos)
 }
 
 #[get("/")]
@@ -21,15 +35,29 @@ async fn greet(_req: HttpRequest) -> impl Responder {
 
 #[get("/todos")]
 async fn todo_index(_req: HttpRequest) -> Result<HttpResponse> {
-    let file = File::open(TODO_FILE_NAME)?;
-    let reader = BufReader::new(file);
-    let todos: Vec<Todo> = serde_json::from_reader(reader)?;
+    let todos = fetch_current_todos()?;
     Ok(HttpResponse::Ok().json(todos))
 }
 
 #[post("/todos")]
-async fn todo_create(_req: HttpRequest) -> impl Responder {
-    HttpResponse::Ok().body("unimplemented!")
+async fn todo_create(params: web::Json<TodoParams>) -> Result<HttpResponse> {
+    let mut todos = fetch_current_todos()?;
+    let param_todo = params.into_inner();
+
+    // build new_todos
+    let new_id = todos.len();
+    let new_todo = Todo {
+        id: new_id as u32,
+        title: param_todo.title,
+        body: param_todo.body,
+    };
+    todos.push(new_todo.clone());
+
+    // write to file
+    let file = File::create(TODO_FILE_NAME)?;
+    serde_json::to_writer_pretty(&file, &todos)?;
+
+    Ok(HttpResponse::Ok().json(new_todo))
 }
 
 #[patch("/todos/{id}")]
@@ -44,8 +72,14 @@ async fn todo_delete(_req: HttpRequest) -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
+    env_logger::init();
     HttpServer::new(|| {
         App::new()
+            .wrap(middleware::Logger::default())
+            .wrap(middleware::NormalizePath::new(
+                middleware::normalize::TrailingSlash::Trim,
+            ))
             .service(greet)
             .service(todo_index)
             .service(todo_create)
