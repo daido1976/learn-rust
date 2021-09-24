@@ -124,11 +124,16 @@ async fn main() -> std::io::Result<()> {
 
 #[cfg(test)]
 mod tests {
+    use std::fs;
+
     use super::*;
     use actix_web::{dev::Body, test, App};
 
     #[actix_rt::test]
     async fn test_crud() {
+        // setup json file
+        fs::write(TODO_FILE_NAME, "[]").unwrap();
+
         let mut app = test::init_service(
             App::new()
                 .service(todo_index)
@@ -137,6 +142,7 @@ mod tests {
                 .service(todo_delete),
         )
         .await;
+
         // test index
         let index_req = test::TestRequest::get()
             .header("content-type", "application/json")
