@@ -1,0 +1,2 @@
+- [Rust and TUI: Building a command\-line interface in Rust \- LogRocket Blog](https://blog.logrocket.com/rust-and-tui-building-a-command-line-interface-in-rust/)
+- https://github.com/zupzup/rust-commandline-example
