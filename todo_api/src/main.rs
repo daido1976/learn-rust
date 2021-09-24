@@ -212,6 +212,23 @@ mod tests {
         assert_eq!(update_resp.status(), 200);
         assert_eq!(expected_body, resp_body);
 
+        // test index when todo is updated
+        let index_req = test::TestRequest::get()
+            .header("content-type", "application/json")
+            .uri("/todos")
+            .to_request();
+        let index_resp = test::call_service(&mut app, index_req).await;
+        assert_eq!(index_resp.status(), 200);
+
+        // See. https://docs.rs/actix-web/3.3.2/actix_web/test/fn.read_body_json.html
+        let expected_body: Vec<Todo> = vec![Todo {
+            id: 1,
+            title: "updated title".to_string(),
+            body: "updated body".to_string(),
+        }];
+        let resp_body: Vec<Todo> = test::read_body_json(index_resp).await;
+        assert_eq!(expected_body, resp_body);
+
         // test delete
         let delete_req = test::TestRequest::delete()
             .header("content-type", "application/json")
