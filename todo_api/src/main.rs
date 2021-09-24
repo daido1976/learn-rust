@@ -15,7 +15,7 @@ struct Todo {
     body: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 struct TodoParams {
     title: String,
     body: String,
@@ -131,15 +131,13 @@ mod tests {
     async fn test_crud() {
         let mut app = test::init_service(
             App::new()
-                .wrap(middleware::NormalizePath::new(
-                    middleware::normalize::TrailingSlash::Trim,
-                ))
                 .service(todo_index)
                 .service(todo_create)
                 .service(todo_update)
                 .service(todo_delete),
         )
         .await;
+        // test index
         let index_req = test::TestRequest::get()
             .header("content-type", "application/json")
             .uri("/todos")
@@ -148,6 +146,30 @@ mod tests {
         let resp_body = index_resp.take_body();
         let resp_body = resp_body.as_ref().unwrap();
         let expected_body = &Body::from("[]");
+
+        assert_eq!(index_resp.status(), 200);
+        assert_eq!(expected_body, resp_body);
+
+        // test create
+        let create_req = test::TestRequest::post()
+            .header("content-type", "application/json")
+            .uri("/todos")
+            .set_json(&TodoParams {
+                title: "test title".to_string(),
+                body: "test body".to_string(),
+            })
+            .to_request();
+        let mut create_resp = test::call_service(&mut app, create_req).await;
+        let resp_body = create_resp.take_body();
+        let resp_body = resp_body.as_ref().unwrap();
+        let expected_body = &Body::from(
+            serde_json::to_string(&Todo {
+                id: 1,
+                title: "test title".to_string(),
+                body: "test body".to_string(),
+            })
+            .unwrap(),
+        );
 
         assert_eq!(index_resp.status(), 200);
         assert_eq!(expected_body, resp_body);
