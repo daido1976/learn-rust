@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 
 const TODO_FILE_NAME: &str = "todo.json";
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
 struct Todo {
     id: u32,
     title: String,
@@ -149,12 +149,20 @@ mod tests {
             .uri("/todos")
             .to_request();
         let mut index_resp = test::call_service(&mut app, index_req).await;
+
+        // See. https://stackoverflow.com/questions/63910673/how-to-get-the-body-of-a-response-in-actix-web-unit-test
         let resp_body = index_resp.take_body();
         let resp_body = resp_body.as_ref().unwrap();
         let expected_body = &Body::from("[]");
-
         assert_eq!(index_resp.status(), 200);
         assert_eq!(expected_body, resp_body);
+
+        // これでもいける
+        // See. https://docs.rs/actix-web/3.3.2/actix_web/test/fn.read_body_json.html
+        // assert_eq!(index_resp.status(), 200);
+        // let expected_body: Vec<Todo> = serde_json::from_str("[]").unwrap();
+        // let resp_body: Vec<Todo> = test::read_body_json(index_resp).await;
+        // assert_eq!(expected_body, resp_body);
 
         // test create
         let create_req = test::TestRequest::post()
