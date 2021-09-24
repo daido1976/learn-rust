@@ -121,3 +121,35 @@ async fn main() -> std::io::Result<()> {
     .run()
     .await
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use actix_web::{dev::Body, test, App};
+
+    #[actix_rt::test]
+    async fn test_crud() {
+        let mut app = test::init_service(
+            App::new()
+                .wrap(middleware::NormalizePath::new(
+                    middleware::normalize::TrailingSlash::Trim,
+                ))
+                .service(todo_index)
+                .service(todo_create)
+                .service(todo_update)
+                .service(todo_delete),
+        )
+        .await;
+        let index_req = test::TestRequest::get()
+            .header("content-type", "application/json")
+            .uri("/todos")
+            .to_request();
+        let mut index_resp = test::call_service(&mut app, index_req).await;
+        let resp_body = index_resp.take_body();
+        let resp_body = resp_body.as_ref().unwrap();
+        let expected_body = &Body::from("[]");
+
+        assert_eq!(index_resp.status(), 200);
+        assert_eq!(expected_body, resp_body);
+    }
+}
