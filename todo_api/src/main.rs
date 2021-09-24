@@ -171,7 +171,40 @@ mod tests {
             .unwrap(),
         );
 
-        assert_eq!(index_resp.status(), 200);
+        assert_eq!(create_resp.status(), 200);
         assert_eq!(expected_body, resp_body);
+
+        // test update
+        let update_req = test::TestRequest::patch()
+            .header("content-type", "application/json")
+            .uri("/todos/1")
+            .set_json(&TodoParams {
+                title: "updated title".to_string(),
+                body: "updated body".to_string(),
+            })
+            .to_request();
+        let mut update_resp = test::call_service(&mut app, update_req).await;
+        let resp_body = update_resp.take_body();
+        let resp_body = resp_body.as_ref().unwrap();
+        let expected_body = &Body::from(
+            serde_json::to_string(&Todo {
+                id: 1,
+                title: "updated title".to_string(),
+                body: "updated body".to_string(),
+            })
+            .unwrap(),
+        );
+
+        assert_eq!(update_resp.status(), 200);
+        assert_eq!(expected_body, resp_body);
+
+        // test delete
+        let delete_req = test::TestRequest::delete()
+            .header("content-type", "application/json")
+            .uri("/todos/1")
+            .to_request();
+        let delete_resp = test::call_service(&mut app, delete_req).await;
+
+        assert_eq!(delete_resp.status(), 200);
     }
 }
