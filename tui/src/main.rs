@@ -7,8 +7,8 @@ use std::{
 
 use chrono::{DateTime, Utc};
 use crossterm::{
-    event::{self, Event as CEvent},
-    terminal::enable_raw_mode,
+    event::{self, Event as CEvent, KeyCode},
+    terminal::{disable_raw_mode, enable_raw_mode},
 };
 use serde::{Deserialize, Serialize};
 use tui::{
@@ -85,59 +85,76 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let menu_titles = vec!["Home", "Pets", "Add", "Delete", "Quit"];
     let mut active_menu_item = MenuItem::Home;
 
-    // Rendering widgets in TUI
-    terminal.draw(|rect| {
-        let size = rect.size();
-        let chunks = Layout::default()
-            .direction(Direction::Vertical)
-            .margin(2)
-            .constraints(
-                [
-                    Constraint::Length(3),
-                    Constraint::Min(2),
-                    Constraint::Length(3),
-                ]
-                .as_ref(),
-            )
-            .split(size);
-        let copyright = Paragraph::new("pet-CLI 2020 - all rights reserved")
-            .style(Style::default().fg(Color::LightCyan))
-            .alignment(Alignment::Center)
-            .block(
-                Block::default()
-                    .borders(Borders::ALL)
-                    .style(Style::default().fg(Color::White))
-                    .title("Copyright")
-                    .border_type(BorderType::Plain),
-            );
-        rect.render_widget(copyright, chunks[2]);
+    loop {
+        // Rendering widgets in TUI
+        terminal.draw(|rect| {
+            let size = rect.size();
+            let chunks = Layout::default()
+                .direction(Direction::Vertical)
+                .margin(2)
+                .constraints(
+                    [
+                        Constraint::Length(3),
+                        Constraint::Min(2),
+                        Constraint::Length(3),
+                    ]
+                    .as_ref(),
+                )
+                .split(size);
+            let copyright = Paragraph::new("pet-CLI 2020 - all rights reserved")
+                .style(Style::default().fg(Color::LightCyan))
+                .alignment(Alignment::Center)
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .style(Style::default().fg(Color::White))
+                        .title("Copyright")
+                        .border_type(BorderType::Plain),
+                );
+            rect.render_widget(copyright, chunks[2]);
 
-        // Building a tabs-based menu
-        let menu = menu_titles
-            .iter()
-            .map(|t| {
-                let (first, rest) = t.split_at(1);
-                Spans::from(vec![
-                    Span::styled(
-                        first,
-                        Style::default()
-                            .fg(Color::Yellow)
-                            .add_modifier(Modifier::UNDERLINED),
-                    ),
-                    Span::styled(rest, Style::default().fg(Color::White)),
-                ])
-            })
-            .collect();
+            // Building a tabs-based menu
+            let menu = menu_titles
+                .iter()
+                .map(|t| {
+                    let (first, rest) = t.split_at(1);
+                    Spans::from(vec![
+                        Span::styled(
+                            first,
+                            Style::default()
+                                .fg(Color::Yellow)
+                                .add_modifier(Modifier::UNDERLINED),
+                        ),
+                        Span::styled(rest, Style::default().fg(Color::White)),
+                    ])
+                })
+                .collect();
 
-        let tabs = Tabs::new(menu)
-            .select(active_menu_item.into())
-            .block(Block::default().title("Menu").borders(Borders::ALL))
-            .style(Style::default().fg(Color::White))
-            .highlight_style(Style::default().fg(Color::Yellow))
-            .divider(Span::raw("|"));
+            let tabs = Tabs::new(menu)
+                .select(active_menu_item.into())
+                .block(Block::default().title("Menu").borders(Borders::ALL))
+                .style(Style::default().fg(Color::White))
+                .highlight_style(Style::default().fg(Color::Yellow))
+                .divider(Span::raw("|"));
 
-        rect.render_widget(tabs, chunks[0]);
-    })?;
+            rect.render_widget(tabs, chunks[0]);
+        })?;
+
+        // Handling input in TUI
+        match rx.recv()? {
+            Event::Input(event) => match event.code {
+                KeyCode::Char('q') => {
+                    disable_raw_mode()?;
+                    terminal.show_cursor()?;
+                    break;
+                }
+                KeyCode::Char('h') => active_menu_item = MenuItem::Home,
+                KeyCode::Char('p') => active_menu_item = MenuItem::Pets,
+                _ => {}
+            },
+            Event::Tick => {}
+        }
+    }
 
     Ok(())
 }
