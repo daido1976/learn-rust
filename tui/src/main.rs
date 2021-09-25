@@ -1,4 +1,5 @@
 use rand::distributions::Alphanumeric;
+use rand::Rng;
 use std::{
     fs, io,
     sync::mpsc,
@@ -317,16 +318,21 @@ fn add_random_pet_to_db() -> Result<Vec<Pet>, std::io::Error> {
     let mut rng = rand::thread_rng();
     let db_content = fs::read_to_string(DB_PATH)?;
     let mut parsed: Vec<Pet> = serde_json::from_str(&db_content)?;
-    let catsdogs = match rng.gen_range(0, 1) {
+    let catsdogs = match rng.gen_range(0..1) {
         0 => "cats",
         _ => "dogs",
     };
 
     let random_pet = Pet {
-        id: rng.gen_range(0, 9999999),
-        name: rng.sample_iter(Alphanumeric).take(10).collect(),
+        id: rng.gen_range(0..9999999),
+        name: rng
+            .clone()
+            .sample_iter(Alphanumeric)
+            .take(10)
+            .map(char::from)
+            .collect(),
         category: catsdogs.to_owned(),
-        age: rng.gen_range(1, 15),
+        age: rng.gen_range(1..15),
         created_at: Utc::now(),
     };
 
