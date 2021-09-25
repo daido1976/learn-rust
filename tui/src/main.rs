@@ -138,6 +138,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .divider(Span::raw("|"));
 
             rect.render_widget(tabs, chunks[0]);
+
+            match active_menu_item {
+                MenuItem::Home => rect.render_widget(render_home(), chunks[1]),
+                MenuItem::Pets => {
+                    // TODO: Implement
+                }
+            }
         })?;
 
         // Handling input in TUI
@@ -157,4 +164,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     Ok(())
+}
+
+fn render_home<'a>() -> Paragraph<'a> {
+    let home = Paragraph::new(vec![
+        Spans::from(vec![Span::raw("")]),
+        Spans::from(vec![Span::raw("Welcome")]),
+        Spans::from(vec![Span::raw("")]),
+        Spans::from(vec![Span::raw("to")]),
+        Spans::from(vec![Span::raw("")]),
+        Spans::from(vec![Span::styled(
+            "pet-CLI",
+            Style::default().fg(Color::LightBlue),
+        )]),
+        Spans::from(vec![Span::raw("")]),
+        Spans::from(vec![Span::raw("Press 'p' to access pets, 'a' to add random new pets and 'd' to delete the currently selected pet.")]),
+    ])
+    .alignment(Alignment::Center)
+    .block(
+        Block::default()
+            .borders(Borders::ALL)
+            .style(Style::default().fg(Color::White))
+            .title("Home")
+            .border_type(BorderType::Plain),
+    );
+    home
 }
