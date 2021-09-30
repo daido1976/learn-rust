@@ -6,17 +6,17 @@ fn main() {
     }
 }
 
-fn fizzbuzz(number: usize) -> String {
-    assert!(number > 0);
+fn fizzbuzz(n: usize) -> String {
+    assert!(n > 0);
 
-    if number % 15 == 0 {
+    if n % 15 == 0 {
         "FizzBuzz".to_string()
-    } else if number % 3 == 0 {
+    } else if n % 3 == 0 {
         "Fizz".to_string()
-    } else if number % 5 == 0 {
+    } else if n % 5 == 0 {
         "Buzz".to_string()
     } else {
-        number.to_string()
+        n.to_string()
     }
 }
 
