@@ -5,7 +5,7 @@ use std::{
 };
 
 pub fn gen_csv(file_path: &str) -> anyhow::Result<()> {
-    let lines = 20;
+    let lines = 300000;
     let timestamp = "2020/01/01 12:00";
     let file = OpenOptions::new()
         .read(true)
@@ -25,7 +25,7 @@ pub fn gen_csv(file_path: &str) -> anyhow::Result<()> {
     // write records
     let mut rng = thread_rng();
     for _ in 0..lines {
-        let id: u8 = random();
+        let id = rng.gen_range(0..10000);
         let player_id = format!("player{}", id);
         let score = rng.gen_range(0..10000);
         let record = format!("{},{},{}\n", timestamp, player_id, score);

@@ -1,6 +1,10 @@
 mod gen_csv;
 
-use std::io;
+use std::{
+    fs::{create_dir_all, File},
+    io::{self, BufReader},
+    time::Instant,
+};
 
 use csv::{Reader, Writer};
 use gen_csv::gen_csv;
@@ -124,16 +128,20 @@ impl GameScoreSummary {
 }
 
 fn main() {
+    let now = Instant::now();
     let file_path = "./data/game_score_log.csv";
 
     // generate csv if not exist
     // create_dir_all("data").expect("failed to create directory");
     // gen_csv(file_path).expect("failed to generate csv");
     run(file_path).unwrap();
+    println!("{} seconds", now.elapsed().as_millis() as f32 / 1000_f32);
 }
 
 fn run(file_path: &str) -> anyhow::Result<()> {
-    let mut rdr = Reader::from_path(file_path).unwrap();
+    let file = File::open(file_path)?;
+    let rdr = BufReader::new(file);
+    let mut rdr = Reader::from_reader(rdr);
     let mut game_score_summary = GameScoreSummary::new();
 
     for result in rdr.deserialize() {
@@ -141,25 +149,6 @@ fn run(file_path: &str) -> anyhow::Result<()> {
         let score = GameScore::from_record(record);
         game_score_summary.upsert(score);
     }
-
-    // // debug
-    // for score in &game_score_summary.0 {
-    //     println!("{:?}", score);
-    // }
-    // let mut means = game_score_summary.to_means();
-    // for mean in &means {
-    //     println!("{:?}", mean);
-    // }
-    // means.sort();
-    // means.reverse();
-    // for mean in means {
-    //     println!("sorted: {:?}", mean);
-    // }
-    // let ranks = game_score_summary.to_ranks(10);
-    // for rank in ranks {
-    //     println!("{:?}", rank);
-    // }
-    // // debug
 
     let mut wtr = Writer::from_writer(io::stdout());
     // write header
