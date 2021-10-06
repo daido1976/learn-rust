@@ -5,7 +5,7 @@ use std::{
 };
 
 pub fn gen_csv(file_path: &str) -> anyhow::Result<()> {
-    let lines = 100000;
+    let lines = 20;
     let timestamp = "2020/01/01 12:00";
     let file = OpenOptions::new()
         .read(true)
