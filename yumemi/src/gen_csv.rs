@@ -1,11 +1,10 @@
-use rand::{random, thread_rng, Rng};
+use rand::{thread_rng, Rng};
 use std::{
     fs::OpenOptions,
     io::{BufWriter, Write},
 };
 
-pub fn gen_csv(file_path: &str) -> anyhow::Result<()> {
-    let lines = 300000;
+pub fn gen_csv(file_path: &str, lines: i32) -> anyhow::Result<()> {
     let timestamp = "2020/01/01 12:00";
     let file = OpenOptions::new()
         .read(true)
