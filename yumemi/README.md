@@ -1,7 +1,18 @@
 # yumemi
 
+## プログラム実行
+
+```sh
+# CSV ファイル生成
+$ cargo run gen_csv 1000
+# ランキング出力プログラムの実行
+$ cargo run
+```
+
+## 参考リンク
+
 - [【新卒・中途採用】サーバーサイドエンジニア応募者向けの模試 \| ゆめみ](https://www.yumemi.co.jp/serverside_recruit)
-  - Also see. [ゆめみ新卒が自社のコーディング試験の模試を解いてみた（Golang）](https://zenn.dev/foolishell/articles/589536ec741ddd)
+- [ゆめみ新卒が自社のコーディング試験の模試を解いてみた（Golang）](https://zenn.dev/foolishell/articles/589536ec741ddd)
 
 ## 概要
 
