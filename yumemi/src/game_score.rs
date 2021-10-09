@@ -35,6 +35,7 @@ struct GameScoreRank {
 }
 
 #[derive(Debug)]
+// TODO: struct GameScoreSummary(HashMap<String, GameScore>); にする
 struct GameScoreSummary(Vec<GameScore>);
 
 impl GameScoreSummary {
@@ -54,6 +55,7 @@ impl GameScoreSummary {
     }
 
     fn find(&mut self, player_id: String) -> Option<&mut GameScore> {
+        // TODO: この find で全件捜査して時間かかってるので HashMap での key アクセスに変える
         self.0.iter_mut().find(|score| score.player_id == player_id)
     }
 
