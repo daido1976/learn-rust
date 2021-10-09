@@ -62,3 +62,47 @@ fn test_parse_name() {
     let invalid_name = "太郎".parse::<Name>();
     assert!(invalid_name.is_err());
 }
+
+use std::marker::PhantomData;
+use std::ops::Add;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Money<T> {
+    amount: u32,
+    currency: PhantomData<T>,
+}
+
+impl<T> Money<T> {
+    fn new(amount: u32) -> Self {
+        Self {
+            amount,
+            currency: PhantomData::<T>,
+        }
+    }
+}
+
+impl<T> Add for Money<T> {
+    type Output = Money<T>;
+
+    fn add(self, other: Money<T>) -> Self::Output {
+        Self::new(self.amount + other.amount)
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Jpy;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Usd;
+
+#[test]
+fn test_phantom_money() {
+    let jpy_1 = Money::<Jpy>::new(100);
+    let jpy_2 = Money::<Jpy>::new(200);
+
+    let _usd = Money::<Usd>::new(300);
+
+    let result = jpy_1 + jpy_2; // コンパイルOk
+    assert_eq!(result, Money::<Jpy>::new(300));
+    // let invalid_result = jpy_1 + _usd; //コンパイルエラー
+}
