@@ -1,19 +1,31 @@
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, Eq)]
 pub struct User {
+    id: UserId,
     name: Name,
 }
 
 impl User {
-    pub fn new(name: Name) -> Self {
-        Self { name }
+    pub fn new(id: UserId, name: Name) -> Self {
+        Self { id, name }
     }
 
-    pub fn change_name(&mut self, name: Name) {
+    pub fn update_name(&mut self, name: Name) {
         self.name = name;
     }
+}
 
-    pub fn name(&self) -> Name {
-        self.name.clone()
+impl PartialEq for User {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct UserId(String);
+
+impl UserId {
+    pub fn new(s: &str) -> Self {
+        Self(s.to_string())
     }
 }
 
@@ -29,13 +41,12 @@ impl Name {
         Ok(Name(s.to_string()))
     }
 }
-#[test]
-fn test_change_name_success() {
-    let name = Name::new("daido1976").unwrap();
-    let mut user = User::new(name);
-    assert_eq!(user.name().0.to_string(), "daido1976".to_string());
 
-    let name = Name::new("updated daido1976").unwrap();
-    user.change_name(name);
-    assert_eq!(user.name().0.to_string(), "updated daido1976".to_string());
+#[test]
+fn test_user_eq() {
+    let before = User::new(UserId::new("user_id"), Name::new("before_name").unwrap());
+    let mut after = before.clone();
+    after.update_name(Name::new("after_name").unwrap());
+    // Only UserId is compared to see if the users are the same, Name is not compared.
+    assert_eq!(before, after);
 }
