@@ -1,8 +1,6 @@
 mod game_score;
 mod gen_csv;
 
-use game_score::run;
-use gen_csv::gen_csv;
 use std::{env, fs::create_dir_all, time::Instant};
 
 fn main() {
@@ -14,7 +12,7 @@ fn main() {
         None => {
             // when executed `$ cargo run`
             let now = Instant::now();
-            run(file_path).expect("failed to run");
+            game_score::run(file_path).expect("failed to run");
             println!(
                 "time: {} seconds",
                 now.elapsed().as_millis() as f32 / 1000_f32
@@ -28,7 +26,7 @@ fn main() {
                 .parse()
                 .expect("failed to parse as a number");
             create_dir_all("data").expect("failed to create directory");
-            gen_csv(file_path, lines).expect("failed to generate csv");
+            gen_csv::generate(file_path, lines).expect("failed to generate csv");
         }
         _ => println!("Usage: `cargo run` or `cargo run gen_csv <lines>`"),
     }

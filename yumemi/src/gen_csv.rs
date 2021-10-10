@@ -4,7 +4,7 @@ use std::{
     io::{BufWriter, Write},
 };
 
-pub fn gen_csv(file_path: &str, lines: i32) -> anyhow::Result<()> {
+pub fn generate(file_path: &str, lines: i32) -> anyhow::Result<()> {
     let timestamp = "2020/01/01 12:00";
     let file = OpenOptions::new()
         .read(true)
