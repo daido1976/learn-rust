@@ -1,4 +1,5 @@
 use csv::{Reader, Writer};
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufReader};
 // create_timestamp,player_id,score
@@ -35,12 +36,11 @@ struct GameScoreRank {
 }
 
 #[derive(Debug)]
-// TODO: struct GameScoreSummary(HashMap<String, GameScore>); にする
-struct GameScoreSummary(Vec<GameScore>);
+struct GameScoreSummary(HashMap<String, GameScore>);
 
 impl GameScoreSummary {
     fn new() -> Self {
-        Self(Vec::new())
+        Self(HashMap::new())
     }
 
     fn upsert(&mut self, new_score: GameScore) {
@@ -55,12 +55,11 @@ impl GameScoreSummary {
     }
 
     fn find(&mut self, player_id: String) -> Option<&mut GameScore> {
-        // TODO: この find で全件捜査して時間かかってるので HashMap での key アクセスに変える
-        self.0.iter_mut().find(|score| score.player_id == player_id)
+        self.0.get_mut(&player_id)
     }
 
     fn insert(&mut self, new_score: GameScore) {
-        self.0.push(new_score);
+        self.0.insert(new_score.clone().player_id, new_score);
     }
 
     fn to_ranks(&self, limit: u32) -> Vec<GameScoreRank> {
@@ -109,10 +108,10 @@ impl GameScoreSummary {
 
     fn to_means(&self) -> Vec<GameScoreMean> {
         let mut game_score_means: Vec<GameScoreMean> = Vec::new();
-        for score in &self.0 {
+        for (player_id, score) in &self.0 {
             let mean_score = score.sum / score.play_count;
             let game_score_mean = GameScoreMean {
-                player_id: score.clone().player_id,
+                player_id: player_id.to_string(),
                 score: mean_score,
             };
             game_score_means.push(game_score_mean);
