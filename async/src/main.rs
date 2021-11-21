@@ -1,26 +1,32 @@
+use bytes::Bytes;
+use std::collections::HashMap;
+use std::sync::{Arc, Mutex};
 use tokio::net::{TcpListener, TcpStream};
+
+type Db = Arc<Mutex<HashMap<String, Bytes>>>;
 
 #[tokio::main]
 async fn main() {
     // Bind the listener to the address
     let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
+    println!("Listening");
+
+    let db = Arc::new(Mutex::new(HashMap::new()));
+
     loop {
         let (socket, _) = listener.accept().await.unwrap();
-        // A new task is spawned for each inbound socket. The socket is
-        // moved to the new task and processed there.
+        // Clone the handle to the hash map.
+        let db = db.clone();
+
+        println!("Accepted");
         tokio::spawn(async move {
-            process(socket).await;
+            process(socket, db).await;
         });
     }
 }
 
-async fn process(socket: TcpStream) {
-    use std::collections::HashMap;
-
-    // A hashmap is used to store data
-    let mut db = HashMap::new();
-
+async fn process(socket: TcpStream, db: Db) {
     // Connection, provided by `mini-redis`, handles parsing frames from the socket
     let mut connection = mini_redis::Connection::new(socket);
 
@@ -28,16 +34,14 @@ async fn process(socket: TcpStream) {
     while let Some(frame) = connection.read_frame().await.unwrap() {
         let response = match mini_redis::Command::from_frame(frame).unwrap() {
             mini_redis::Command::Set(cmd) => {
-                // The value is stored as `Vec<u8>`
-                db.insert(cmd.key().to_string(), cmd.value().to_vec());
+                let mut db = db.lock().unwrap();
+                db.insert(cmd.key().to_string(), cmd.value().clone());
                 mini_redis::Frame::Simple("OK".to_string())
             }
             mini_redis::Command::Get(cmd) => {
+                let db = db.lock().unwrap();
                 if let Some(value) = db.get(cmd.key()) {
-                    // `Frame::Bulk` expects data to be of type `Bytes`. This
-                    // type will be covered later in the tutorial. For now,
-                    // `&Vec<u8>` is converted to `Bytes` using `into()`.
-                    mini_redis::Frame::Bulk(value.clone().into())
+                    mini_redis::Frame::Bulk(value.clone())
                 } else {
                     mini_redis::Frame::Null
                 }
