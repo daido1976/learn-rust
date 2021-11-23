@@ -47,7 +47,7 @@ enum MyError {
 impl ResponseError for MyError {}
 
 #[get("/")]
-async fn index(db: Data<Pool<SqliteConnectionManager>>) -> Result<HttpResponse, MyError> {
+async fn index_handler(db: Data<Pool<SqliteConnectionManager>>) -> Result<HttpResponse, MyError> {
     let conn = db.get()?;
     let mut statement = conn.prepare("SELECT * from todos;")?;
     let rows = statement.query_map(params![], |row| {
@@ -68,7 +68,7 @@ async fn index(db: Data<Pool<SqliteConnectionManager>>) -> Result<HttpResponse, 
 }
 
 #[post("/add")]
-async fn add_todo(
+async fn add_todo_handler(
     params: web::Form<AddParams>,
     db: Data<Pool<SqliteConnectionManager>>,
 ) -> Result<HttpResponse, MyError> {
@@ -81,7 +81,7 @@ async fn add_todo(
 }
 
 #[post("/delete")]
-async fn delete_todo(
+async fn delete_todo_handler(
     params: web::Form<DeleteParams>,
     db: Data<Pool<SqliteConnectionManager>>,
 ) -> Result<HttpResponse, MyError> {
@@ -113,9 +113,9 @@ async fn main() -> Result<(), actix_web::Error> {
     HttpServer::new(move || {
         App::new()
             .wrap(middleware::Logger::default())
-            .service(index)
-            .service(add_todo)
-            .service(delete_todo)
+            .service(index_handler)
+            .service(add_todo_handler)
+            .service(delete_todo_handler)
             .data(pool.clone())
     })
     .bind("127.0.0.1:3000")?
