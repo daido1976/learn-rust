@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 mod calculator;
+mod climb_stairs;
 mod is_palindrome;
 mod max_sub_array;
 mod merge_two_lists;
