@@ -40,7 +40,9 @@ impl Solution {
         let target_word = strs.pop();
         if let Some(target_word) = target_word {
             for (i, c) in target_word.char_indices() {
-                let contains = strs.iter().all(|s| s.chars().nth(i).unwrap_or(' ') == c);
+                let contains = strs
+                    .iter()
+                    .all(|s| s.chars().nth(i).unwrap_or_default() == c);
                 if contains {
                     result.push(c);
                 } else {
