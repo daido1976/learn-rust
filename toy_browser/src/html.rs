@@ -1,6 +1,22 @@
 use crate::dom;
 use std::collections::HashMap;
 
+/// Parse an HTML document and return the root element.
+pub fn parse(source: String) -> dom::Node {
+    let mut nodes = Parser {
+        position: 0,
+        input: source,
+    }
+    .parse_nodes();
+
+    // If the document contains a root element, just return it. Otherwise, create one.
+    if nodes.len() == 1 {
+        nodes.swap_remove(0)
+    } else {
+        dom::elem("html".to_string(), HashMap::new(), nodes)
+    }
+}
+
 struct Parser {
     position: usize,
     input: String,
@@ -22,7 +38,7 @@ impl Parser {
 
     /// Parse a single node.
     fn parse_node(&mut self) -> dom::Node {
-        match self.next_char() {
+        match self.current_char() {
             '<' => self.parse_element(),
             _ => self.parse_text(),
         }
@@ -58,7 +74,7 @@ impl Parser {
         let mut attributes = HashMap::new();
         loop {
             self.consume_whitespace();
-            if self.next_char() == '>' {
+            if self.current_char() == '>' {
                 break;
             }
             let (name, value) = self.parse_attribute();
@@ -100,7 +116,7 @@ impl Parser {
         F: Fn(char) -> bool,
     {
         let mut result = String::new();
-        while !self.eof() && predicate(self.next_char()) {
+        while !self.eof() && predicate(self.current_char()) {
             result.push(self.consume_char());
         }
         result
@@ -116,11 +132,8 @@ impl Parser {
     }
 
     // Read the current character without consuming it.
-    fn next_char(&self) -> char {
-        self.input
-            .chars()
-            .nth(self.position + 1)
-            .unwrap_or_default()
+    fn current_char(&self) -> char {
+        self.input.chars().nth(self.position).unwrap_or_default()
     }
 
     // Do the next characters start with the given string?
@@ -150,22 +163,22 @@ mod tests {
     }
 
     #[test]
-    fn test_next_char() {
+    fn test_current_char() {
         let parser = Parser {
             position: 3,
             input: "abcde".to_owned(),
         };
-        let next_char = parser.next_char();
-        assert_eq!(next_char, 'e')
+        let current_char = parser.current_char();
+        assert_eq!(current_char, 'd')
     }
 
     #[test]
-    fn test_next_char_eof() {
+    fn test_current_char_eof() {
         let parser = Parser {
-            position: 4,
+            position: 5,
             input: "abcde".to_owned(),
         };
-        let next_char = parser.next_char();
-        assert_eq!(next_char, '\0');
+        let current_char = parser.current_char();
+        assert_eq!(current_char, '\0');
     }
 }
