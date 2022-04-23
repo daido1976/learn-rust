@@ -54,29 +54,29 @@ impl Parser {
     }
 
     /// Parse a list of name="value" pairs, separated by whitespace.
-    fn parse_attributes(&mut self) -> dom::AttrMap {
+    fn parse_attributes(&mut self) -> dom::AttributeMap {
         let mut attributes = HashMap::new();
         loop {
             self.consume_whitespace();
             if self.next_char() == '>' {
                 break;
             }
-            let (name, value) = self.parse_attr();
+            let (name, value) = self.parse_attribute();
             attributes.insert(name, value);
         }
         attributes
     }
 
     /// Parse a single name="value" pair.
-    fn parse_attr(&mut self) -> (String, String) {
+    fn parse_attribute(&mut self) -> (String, String) {
         let name = self.parse_tag_name();
         assert_eq!(self.consume_char(), '=');
-        let value = self.parse_attr_value();
+        let value = self.parse_attribute_value();
         (name, value)
     }
 
     /// Parse a quoted value.
-    fn parse_attr_value(&mut self) -> String {
+    fn parse_attribute_value(&mut self) -> String {
         let open_quote = self.consume_char();
         assert!(open_quote == '"' || open_quote == '\'');
         let value = self.consume_while(|c| c != open_quote);

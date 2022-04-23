@@ -17,12 +17,12 @@ pub enum NodeType {
     Text(String),
 }
 
-pub type AttrMap = HashMap<String, String>;
+pub type AttributeMap = HashMap<String, String>;
 
 #[derive(Debug)]
 pub struct ElementData {
     pub tag_name: String,
-    pub attributes: AttrMap,
+    pub attributes: AttributeMap,
 }
 
 // Constructor functions for convenience:
@@ -33,12 +33,12 @@ pub fn text(data: String) -> Node {
     }
 }
 
-pub fn elem(name: String, attrs: AttrMap, children: Vec<Node>) -> Node {
+pub fn elem(name: String, attributes: AttributeMap, children: Vec<Node>) -> Node {
     Node {
         children,
         node_type: NodeType::Element(ElementData {
             tag_name: name,
-            attributes: attrs,
+            attributes,
         }),
     }
 }
