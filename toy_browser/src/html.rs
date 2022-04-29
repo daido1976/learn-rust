@@ -3,11 +3,7 @@ use std::collections::HashMap;
 
 /// Parse an HTML document and return the root element.
 pub fn parse(source: String) -> dom::Node {
-    let mut nodes = Parser {
-        position: 0,
-        input: source,
-    }
-    .parse_nodes();
+    let mut nodes = Parser::new(0, source).parse_nodes();
 
     // If the document contains a root element, just return it. Otherwise, create one.
     if nodes.len() == 1 {
@@ -23,6 +19,11 @@ struct Parser {
 }
 
 impl Parser {
+    /// Creates a new `Parser`.
+    fn new(position: usize, input: String) -> Self {
+        Parser { position, input }
+    }
+
     /// Parse a sequence of sibling nodes.
     fn parse_nodes(&mut self) -> Vec<dom::Node> {
         let mut nodes = vec![];
@@ -153,10 +154,7 @@ mod tests {
 
     #[test]
     fn test_consume_char() {
-        let mut parser = Parser {
-            position: 3,
-            input: "abcde".to_owned(),
-        };
+        let mut parser = Parser::new(3, "abcde".to_owned());
         let current_char = parser.consume_char();
         assert_eq!(current_char, 'd');
         assert_eq!(parser.position, 4)
@@ -164,20 +162,14 @@ mod tests {
 
     #[test]
     fn test_current_char() {
-        let parser = Parser {
-            position: 3,
-            input: "abcde".to_owned(),
-        };
+        let parser = Parser::new(3, "abcde".to_owned());
         let current_char = parser.current_char();
         assert_eq!(current_char, 'd')
     }
 
     #[test]
     fn test_current_char_eof() {
-        let parser = Parser {
-            position: 5,
-            input: "abcde".to_owned(),
-        };
+        let parser = Parser::new(5, "abcde".to_owned());
         let current_char = parser.current_char();
         assert_eq!(current_char, '\0');
     }
