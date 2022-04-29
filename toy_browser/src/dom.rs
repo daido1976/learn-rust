@@ -17,10 +17,13 @@ pub enum NodeType {
     Text(String),
 }
 
+/// AttributeMap keys are, for example, `id` and `class`.
+/// e.g. {"id": "myHeader", "class": "city"}
 pub type AttributeMap = HashMap<String, String>;
 
 #[derive(Debug, PartialEq)]
 pub struct ElementData {
+    // e.g. "h1", "p", "div"
     pub tag_name: String,
     pub attributes: AttributeMap,
 }
