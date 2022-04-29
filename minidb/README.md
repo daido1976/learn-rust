@@ -1,1 +1,2 @@
-See. https://github.com/KOBA789/relly
+- [WEB+DB PRESS Vol.122](https://www.amazon.co.jp/dp/B092Q8SKDB/) 『特集 3 作って学ぶ RDBMS のしくみ』
+- https://github.com/KOBA789/relly

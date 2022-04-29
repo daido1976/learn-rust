@@ -1,6 +1,7 @@
 # Socket
 
-See. https://github.com/teru01/socket-programming/tree/web-version
+- [Rust で始めるネットワークプログラミング](https://www.amazon.co.jp/dp/B07SW2GXVF)
+- https://github.com/teru01/socket-programming/tree/web-version
 
 ```sh
 # with tcp protocol
