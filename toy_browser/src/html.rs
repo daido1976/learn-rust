@@ -153,6 +153,43 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_parse_element() {
+        {
+            let mut parser = Parser::new(
+                0,
+                "<p id=\"test\" class=\"sample\">hello world</p>".to_owned(),
+            );
+            let mut attributes = dom::AttributeMap::new();
+            attributes.insert("id".to_string(), "test".to_string());
+            attributes.insert("class".to_string(), "sample".to_string());
+            let node = dom::elem(
+                "p".to_owned(),
+                attributes,
+                vec![dom::text("hello world".to_owned())],
+            );
+            assert_eq!(parser.parse_element(), node);
+        }
+    }
+
+    #[test]
+    fn test_parse_attributes() {
+        let mut parser = Parser::new(0, "test=\"foobar\" abc=\"def\">".to_owned());
+        let mut attributes = dom::AttributeMap::new();
+        attributes.insert("test".to_string(), "foobar".to_string());
+        attributes.insert("abc".to_string(), "def".to_string());
+        assert_eq!(parser.parse_attributes(), attributes);
+    }
+
+    #[test]
+    fn test_parse_attribute() {
+        let mut parser = Parser::new(0, "test=\"foobar\"".to_owned());
+        assert_eq!(
+            parser.parse_attribute(),
+            ("test".to_string(), "foobar".to_string())
+        );
+    }
+
+    #[test]
     fn test_consume_char() {
         let mut parser = Parser::new(3, "abcde".to_owned());
         let current_char = parser.consume_char();
