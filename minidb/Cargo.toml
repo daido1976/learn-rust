@@ -1,5 +1,4 @@
 [package]
-authors = ["daido1976 <daido1976@gmail.com>"]
 edition = "2021"
 name = "minidb"
 version = "0.1.0"

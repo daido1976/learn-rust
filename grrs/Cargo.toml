@@ -1,5 +1,4 @@
 [package]
-authors = ["Daido Shota <daido1976@gmail.com>"]
 edition = "2021"
 name = "grrs"
 version = "0.1.0"
