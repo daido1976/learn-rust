@@ -1,5 +1,8 @@
 use std::net::TcpListener;
+use zero2prod::config;
 use zero2prod::run;
+
+use sqlx::{Connection, PgConnection};
 
 fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
@@ -35,6 +38,15 @@ async fn subscribe_returns_a_200_for_valid_form_data() {
     // Arrange
     let app_address = spawn_app();
     let client = reqwest::Client::new();
+
+    std::env::set_var(
+        "DATABASE_URL",
+        "postgres://postgres:password@localhost/zero2prod",
+    );
+    let config = config::get_configuration();
+    let connection = PgConnection::connect(&config.database_url)
+        .await
+        .expect("Failed to connect to Postgres.");
 
     // Act
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
