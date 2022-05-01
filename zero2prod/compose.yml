@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres:14.2-alpine
+    ports:
+      - 15432:5432 # for convenience
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: zero2prod
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+volumes:
+  pg_data:
