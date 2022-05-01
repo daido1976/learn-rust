@@ -1,10 +1,10 @@
 use std::net::TcpListener;
-use zero2prod::{config, run};
+use zero2prod::{app, config};
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
     let config = config::get_configuration();
     let address = format!("127.0.0.1:{}", config.application_port);
     let listener = TcpListener::bind(address)?;
-    run(listener)?.await
+    app::run(listener)?.await
 }
