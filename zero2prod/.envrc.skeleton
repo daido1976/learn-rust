@@ -1,0 +1,2 @@
+# postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${POSTGRES_PORT}/${POSTGRES_DB}
+export DATABASE_URL=postgres://postgres:password@localhost/zero2prod
