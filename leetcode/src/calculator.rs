@@ -40,7 +40,7 @@ impl Solution {
         let mut sign: i32 = 1;
         loop {
             if let Some(c) = chars.pop_front() {
-                if c.is_digit(10) {
+                if c.is_ascii_digit() {
                     num = num * 10 + c.to_digit(10).unwrap() as i32;
                 } else if c == '+' {
                     stack.push(sign * num);
