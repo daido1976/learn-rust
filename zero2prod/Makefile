@@ -19,7 +19,7 @@ migration_run:
 	sqlx migrate run
 
 test_db_setup:
-	sqlx database setup --database-url $(TEST_DATABASE_URL) -y
+	sqlx database setup --database-url $(TEST_DATABASE_URL)
 
 test_db_reset:
 	sqlx database reset --database-url $(TEST_DATABASE_URL) -y
