@@ -9,12 +9,12 @@ pub struct Rule {
     pub declarations: Vec<Declaration>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Selector {
     Simple(SimpleSelector),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct SimpleSelector {
     pub tag_name: Option<String>,
     pub id: Option<String>,
@@ -34,12 +34,12 @@ pub enum Value {
     ColorValue(Color),
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Unit {
     Px,
 }
 
-#[derive(Debug, Clone, PartialEq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct Color {
     pub r: u8,
     pub g: u8,

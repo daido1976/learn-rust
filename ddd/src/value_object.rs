@@ -1,7 +1,7 @@
 use regex::Regex;
 use std::str::FromStr;
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct FullName {
     first_name: Name,
     last_name: Name,

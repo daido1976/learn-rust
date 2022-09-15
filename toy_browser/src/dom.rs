@@ -11,7 +11,7 @@ pub struct Node {
     pub node_type: NodeType,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum NodeType {
     Element(ElementData),
     Text(String),
@@ -21,7 +21,7 @@ pub enum NodeType {
 /// e.g. {"id": "myHeader", "class": "city"}
 pub type AttributeMap = HashMap<String, String>;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct ElementData {
     // e.g. "h1", "p", "div"
     pub tag_name: String,
