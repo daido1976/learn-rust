@@ -17,9 +17,11 @@ $ cargo new <project_name>
 $ cd <project_name>
 ```
 
-## Testing
+## Check & Test
 
 ```sh
+# Check for compilability on all projects
+$ make check
 # Test on all projects.
 $ make test
 ```

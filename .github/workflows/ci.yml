@@ -2,19 +2,20 @@ name: Rust
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  test:
-
+  check_and_test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Run tests
-      run: make test
+      - uses: actions/checkout@v3
+      - name: Run check
+        run: make check
+      - name: Run tests
+        run: make test
