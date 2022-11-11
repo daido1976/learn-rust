@@ -9,3 +9,17 @@
 - Also add following too.
   - [実践 Rust プログラミング入門](https://www.amazon.co.jp/dp/B08PF27TRZ)
   - [Rust を始めるための資料集 \- Don't Repeat Yourself](https://blog-dry.com/entry/2021/01/23/141936)
+
+## Start new project
+
+```sh
+$ cargo new <project_name>
+$ cd <project_name>
+```
+
+## Testing
+
+```sh
+# Test on all projects.
+$ make test
+```
