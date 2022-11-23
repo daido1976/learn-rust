@@ -12,6 +12,6 @@ pub fn serve(addr: &str) -> Result<()> {
         debug!("received request: {}", req);
 
         let res = format!("{}!!!\n", req);
-        server_socket.send_to(res.as_bytes(), &src)?;
+        server_socket.send_to(res.as_bytes(), src)?;
     }
 }

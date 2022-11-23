@@ -134,7 +134,7 @@ pub fn run(file_path: &str) -> anyhow::Result<()> {
 
     let mut wtr = Writer::from_writer(io::stdout());
     // write header
-    wtr.write_record(&["rank", "player_id", "mean_score"])
+    wtr.write_record(["rank", "player_id", "mean_score"])
         .unwrap();
     game_score_summary
         .to_ranks(10)
