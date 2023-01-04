@@ -80,7 +80,7 @@ fn quick_sort_in_place<T: Ord>(arr: &mut [T]) {
                 arr.swap(i as usize, j as usize);
             }
         }
-        arr.swap(i as usize, pivot as usize);
+        arr.swap(i as usize, pivot);
         i
     }
 }
