@@ -1,0 +1,5 @@
+- https://doc.rust-lang.org/nomicon/ffi.html
+- https://doc.rust-lang.org/std/ffi/index.html
+- https://github.com/rust-lang/libc
+- https://github.com/stainless-steel/sqlite
+- https://github.com/rusqlite/rusqlite
