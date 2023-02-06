@@ -6,7 +6,7 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sqlite-sys = {path = "sqlite-sys", version = "0.1.0"}
+my-sqlite-sys = {path = "my-sqlite-sys", version = "0.1.0"}
 
 [dev-dependencies]
 sqlite = "0.30.3"

@@ -1,4 +1,4 @@
-use sqlite_sys::*;
+use my_sqlite_sys::*;
 
 fn main() {
     unsafe {
