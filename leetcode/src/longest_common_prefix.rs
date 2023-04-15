@@ -5,7 +5,7 @@ use crate::Solution;
 // Write a function to find the longest common prefix string amongst an array of strings.
 // If there is no common prefix, return an empty string "".
 #[test]
-fn test_two_sum() {
+fn test_longest_common_prefix() {
     assert_eq!(
         Solution::longest_common_prefix(vec![
             "flower".to_owned(),
@@ -49,8 +49,6 @@ impl Solution {
                     return result;
                 }
             }
-        } else {
-            return "".to_owned();
         }
         result
     }

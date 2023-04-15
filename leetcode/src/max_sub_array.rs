@@ -5,7 +5,7 @@ use crate::Solution;
 // Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum.
 // A subarray is a contiguous part of an array.
 #[test]
-fn test_two_sum() {
+fn test_max_sub_array() {
     assert_eq!(
         Solution::max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
         6

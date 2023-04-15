@@ -5,7 +5,7 @@ use crate::Solution;
 // You are climbing a staircase. It takes n steps to reach the top.
 // Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?
 #[test]
-fn test_two_sum() {
+fn test_climb_stairs() {
     assert_eq!(Solution::climb_stairs(1), 1);
     assert_eq!(Solution::climb_stairs(2), 2);
     assert_eq!(Solution::climb_stairs(3), 3);

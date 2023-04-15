@@ -6,7 +6,7 @@ use crate::Solution;
 // If not, return the index where it would be if it were inserted in order.
 // You must write an algorithm with O(log n) runtime complexity.
 #[test]
-fn test_two_sum() {
+fn test_search_insert() {
     assert_eq!(Solution::search_insert(vec![1, 3, 5, 6], 5), 2);
     assert_eq!(Solution::search_insert(vec![1, 3, 5, 6], 2), 1);
     assert_eq!(Solution::search_insert(vec![1, 3, 5, 6], 7), 4);
