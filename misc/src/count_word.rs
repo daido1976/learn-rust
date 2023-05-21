@@ -11,11 +11,9 @@ fn test_count_word() {
 }
 
 fn count_word(s: &str) -> HashMap<&str, i32> {
-    s.split_whitespace()
-        .into_iter()
-        .fold(HashMap::new(), |mut acc, word| {
-            let count = acc.entry(word).or_insert(0);
-            *count += 1;
-            acc
-        })
+    s.split_whitespace().fold(HashMap::new(), |mut acc, word| {
+        let count = acc.entry(word).or_insert(0);
+        *count += 1;
+        acc
+    })
 }
