@@ -17,3 +17,24 @@ fn reverse_string(s: &str) -> String {
     }
     chars.into_iter().collect()
 }
+
+#[test]
+fn test_my_reverse_string() {
+    assert_eq!(my_reverse_string("bar"), "rab");
+    assert_eq!(my_reverse_string("hoge"), "egoh");
+    assert_eq!(my_reverse_string("h"), "h");
+    assert_eq!(my_reverse_string(""), "");
+}
+
+fn my_reverse_string(s: &str) -> String {
+    let mut chars: Vec<char> = s.chars().collect();
+    let mut result = "".to_string();
+    loop {
+        let last = chars.pop();
+        if last.is_none() {
+            break;
+        }
+        result.push(last.unwrap());
+    }
+    result
+}
