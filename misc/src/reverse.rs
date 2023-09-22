@@ -26,7 +26,24 @@ fn test_my_reverse_string() {
     assert_eq!(my_reverse_string(""), "");
 }
 
+// O(n)
 fn my_reverse_string(s: &str) -> String {
+    s.chars().rfold(String::new(), |mut acc, c| {
+        acc.push(c);
+        acc
+    })
+}
+
+#[test]
+fn test_my_reverse_string_imperative() {
+    assert_eq!(my_reverse_string_imperative("bar"), "rab");
+    assert_eq!(my_reverse_string_imperative("hoge"), "egoh");
+    assert_eq!(my_reverse_string_imperative("h"), "h");
+    assert_eq!(my_reverse_string_imperative(""), "");
+}
+
+// O(n)
+fn my_reverse_string_imperative(s: &str) -> String {
     let mut chars: Vec<char> = s.chars().collect();
     let mut result = "".to_string();
     while let Some(last) = chars.pop() {
