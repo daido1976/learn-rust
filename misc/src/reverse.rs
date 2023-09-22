@@ -29,12 +29,8 @@ fn test_my_reverse_string() {
 fn my_reverse_string(s: &str) -> String {
     let mut chars: Vec<char> = s.chars().collect();
     let mut result = "".to_string();
-    loop {
-        let last = chars.pop();
-        if last.is_none() {
-            break;
-        }
-        result.push(last.unwrap());
+    while let Some(last) = chars.pop() {
+        result.push(last);
     }
     result
 }
