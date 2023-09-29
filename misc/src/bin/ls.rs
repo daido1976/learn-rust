@@ -4,17 +4,17 @@ use std::path::Path;
 
 struct FilePresenter {
     name: String,
-    is_directory: bool,
+    is_dir: bool,
 }
 
 impl FilePresenter {
-    fn new(name: String, is_directory: bool) -> Self {
-        FilePresenter { name, is_directory }
+    fn new(name: String, is_dir: bool) -> Self {
+        Self { name, is_dir }
     }
 
     fn to_pretty(&self) -> String {
-        if self.is_directory {
-            // blue
+        if self.is_dir {
+            // Blue color
             format!("\x1b[34m{}\x1b[0m", &self.name)
         } else {
             self.name.clone()
@@ -46,13 +46,9 @@ fn convert_files_to_output(files: &[FilePresenter]) -> String {
 fn main() {
     let args: Vec<String> = env::args().collect();
     let current_dir = env::current_dir().unwrap();
-    let target_path = if args.len() > 1 {
-        Path::new(&args[1])
-    } else {
-        Path::new(&current_dir)
-    };
+    let target_path = args.get(1).map_or(current_dir.as_path(), |p| Path::new(p));
 
-    let files = get_files_from_directory(&target_path);
+    let files = get_files_from_directory(target_path);
     let output = convert_files_to_output(&files);
     println!("{}", output);
 }
