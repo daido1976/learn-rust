@@ -49,7 +49,6 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
     use tempfile::tempdir;
 
     #[test]
@@ -60,10 +59,10 @@ mod tests {
         fs::write(dir_path.join("testfile.txt"), "content").unwrap();
         fs::create_dir(dir_path.join("testdir")).unwrap();
 
-        let mut buffer = Cursor::new(Vec::new());
+        let mut buffer = Vec::new();
         list_directory(&mut buffer, &dir_path).unwrap();
 
-        let output = String::from_utf8(buffer.into_inner()).unwrap();
+        let output = String::from_utf8(buffer).unwrap();
         assert_eq!(output, "\u{1b}[34mtestdir\u{1b}[0m  testfile.txt\n");
     }
 }
