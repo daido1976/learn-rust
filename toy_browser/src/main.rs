@@ -1,8 +1,4 @@
-#![allow(dead_code)]
-
-mod css;
-mod dom;
-mod html;
+use toy_browser::html;
 
 fn main() {
     let html = r#"
