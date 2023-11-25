@@ -14,6 +14,19 @@ pub enum Selector {
     Simple(SimpleSelector),
 }
 
+pub type Specificity = (usize, usize, usize);
+
+impl Selector {
+    // http://www.w3.org/TR/selectors/#specificity
+    pub fn specificity(&self) -> Specificity {
+        let Selector::Simple(ref simple) = *self;
+        let a = simple.id.iter().count();
+        let b = simple.class.len();
+        let c = simple.tag_name.iter().count();
+        (a, b, c)
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct SimpleSelector {
     pub tag_name: Option<String>,
@@ -34,6 +47,16 @@ pub enum Value {
     ColorValue(Color),
 }
 
+impl Value {
+    /// Return the size of a length in px, or zero for non-lengths.
+    pub fn to_px(&self) -> f32 {
+        match *self {
+            Value::Length(f, Unit::Px) => f,
+            _ => 0.0,
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Unit {
     Px,
@@ -47,29 +70,6 @@ pub struct Color {
 }
 
 impl Copy for Color {}
-
-pub type Specificity = (usize, usize, usize);
-
-impl Selector {
-    // http://www.w3.org/TR/selectors/#specificity
-    pub fn specificity(&self) -> Specificity {
-        let Selector::Simple(ref simple) = *self;
-        let a = simple.id.iter().count();
-        let b = simple.class.len();
-        let c = simple.tag_name.iter().count();
-        (a, b, c)
-    }
-}
-
-impl Value {
-    /// Return the size of a length in px, or zero for non-lengths.
-    pub fn to_px(&self) -> f32 {
-        match *self {
-            Value::Length(f, Unit::Px) => f,
-            _ => 0.0,
-        }
-    }
-}
 
 /// Parse a whole CSS stylesheet.
 pub fn parse(source: String) -> Stylesheet {

@@ -28,6 +28,20 @@ pub struct ElementData {
     pub attributes: AttributeMap,
 }
 
+// Element methods
+impl ElementData {
+    pub fn id(&self) -> Option<&String> {
+        self.attributes.get("id")
+    }
+
+    pub fn classes(&self) -> HashSet<&str> {
+        match self.attributes.get("class") {
+            Some(classlist) => classlist.split(' ').collect(),
+            None => HashSet::new(),
+        }
+    }
+}
+
 // Constructor functions for convenience:
 pub fn text(data: String) -> Node {
     Node {
@@ -43,19 +57,5 @@ pub fn elem(name: String, attributes: AttributeMap, children: Vec<Node>) -> Node
             tag_name: name,
             attributes,
         }),
-    }
-}
-
-// Element methods
-impl ElementData {
-    pub fn id(&self) -> Option<&String> {
-        self.attributes.get("id")
-    }
-
-    pub fn classes(&self) -> HashSet<&str> {
-        match self.attributes.get("class") {
-            Some(classlist) => classlist.split(' ').collect(),
-            None => HashSet::new(),
-        }
     }
 }
