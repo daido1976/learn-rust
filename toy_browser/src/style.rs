@@ -7,6 +7,13 @@ use crate::{
 };
 use std::collections::HashMap;
 
+#[derive(Debug, PartialEq)]
+pub enum Display {
+    Inline,
+    Block,
+    None,
+}
+
 /// Map from CSS property names to values.
 pub type PropertyMap = HashMap<String, Value>;
 
@@ -14,8 +21,34 @@ pub type PropertyMap = HashMap<String, Value>;
 /// It forms a tree as `Node` does.
 pub struct StyledNode<'a> {
     pub node: &'a Node,
-    pub specified_values: PropertyMap,
+    pub properties: PropertyMap,
     pub children: Vec<StyledNode<'a>>,
+}
+
+impl<'a> StyledNode<'a> {
+    /// Return the specified value of a property if it exists, otherwise `None`.
+    pub fn value(&self, name: &str) -> Option<Value> {
+        self.properties.get(name).cloned()
+    }
+
+    /// Return the specified value of property `name`, or property `fallback_name` if that doesn't
+    /// exist, or value `default` if neither does.
+    pub fn lookup(&self, name: &str, fallback_name: &str, default: &Value) -> Value {
+        self.value(name)
+            .unwrap_or_else(|| self.value(fallback_name).unwrap_or_else(|| default.clone()))
+    }
+
+    /// The value of the `display` property (defaults to inline).
+    pub fn display(&self) -> Display {
+        match self.value("display") {
+            Some(Value::Keyword(s)) => match s.as_str() {
+                "block" => Display::Block,
+                "none" => Display::None,
+                _ => Display::Inline,
+            },
+            _ => Display::Inline,
+        }
+    }
 }
 
 /// Apply a stylesheet to an entire DOM tree, returning a StyledNode tree.
@@ -25,8 +58,8 @@ pub struct StyledNode<'a> {
 pub fn to_styled_node<'a>(root: &'a Node, stylesheet: &'a Stylesheet) -> StyledNode<'a> {
     StyledNode {
         node: root,
-        specified_values: match root.node_type {
-            NodeType::Element(ref elem) => specified_values(elem, stylesheet),
+        properties: match root.node_type {
+            NodeType::Element(ref elem) => to_properties(elem, stylesheet),
             NodeType::Text(_) => HashMap::new(),
         },
         children: root
@@ -37,10 +70,10 @@ pub fn to_styled_node<'a>(root: &'a Node, stylesheet: &'a Stylesheet) -> StyledN
     }
 }
 
-/// Apply styles to a single element, returning the specified styles.
+/// Apply styles to a single element, returning the properties.
 ///
 /// To do: Allow multiple UA/author/user stylesheets, and implement the cascade.
-fn specified_values(elem: &ElementData, stylesheet: &Stylesheet) -> PropertyMap {
+fn to_properties(elem: &ElementData, stylesheet: &Stylesheet) -> PropertyMap {
     let mut rules = matching_rules(elem, stylesheet);
 
     // Sort rules by specificity
@@ -74,7 +107,7 @@ fn match_rule<'a>(elem: &ElementData, rule: &'a Rule) -> Option<MatchedRule<'a>>
     // Find the first (most specific) matching selector.
     rule.selectors
         .iter()
-        .find(|selector| matches(elem, *selector))
+        .find(|selector| matches(elem, selector))
         .map(|selector| (selector.specificity(), rule))
 }
 
@@ -87,7 +120,7 @@ fn matches(elem: &ElementData, selector: &Selector) -> bool {
 fn matches_simple_selector(elem: &ElementData, selector: &SimpleSelector) -> bool {
     // Check if the type selector matches (if present)
     if let Some(tag_name) = &selector.tag_name {
-        if elem.tag_name != *tag_name {
+        if elem.tag_name.as_str() != tag_name {
             return false;
         }
     }
@@ -103,5 +136,5 @@ fn matches_simple_selector(elem: &ElementData, selector: &SimpleSelector) -> boo
     selector
         .class
         .iter()
-        .all(|class| elem.classes().contains(&**class))
+        .all(|class| elem.classes().contains(class.as_str()))
 }
