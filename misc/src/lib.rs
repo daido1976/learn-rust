@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+mod array_column;
 mod count_word;
 mod difference;
 mod mutable;
