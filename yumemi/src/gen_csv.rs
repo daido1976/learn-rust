@@ -10,6 +10,7 @@ pub fn generate(file_path: &str, lines: i32) -> anyhow::Result<()> {
         .read(true)
         .write(true)
         .create(true)
+        .truncate(true)
         .open(file_path)?;
 
     // clear file contents

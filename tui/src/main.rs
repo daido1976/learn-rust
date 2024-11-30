@@ -84,7 +84,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut terminal = Terminal::new(backend)?;
     terminal.clear()?;
 
-    let menu_titles = vec!["Home", "Pets", "Add", "Delete", "Quit"];
+    let menu_titles = ["Home", "Pets", "Add", "Delete", "Quit"];
     let mut active_menu_item = MenuItem::Home;
     let mut pet_list_state = ListState::default();
     pet_list_state.select(Some(0));

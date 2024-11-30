@@ -20,7 +20,7 @@ pub struct BoxProps<'a> {
     pub properties: PropertyMap,
 }
 
-pub fn to_layout_box<'a>(snode: StyledNode<'a>) -> LayoutBox<'a> {
+pub fn to_layout_box(snode: StyledNode<'_>) -> LayoutBox<'_> {
     LayoutBox {
         box_type: match snode.display() {
             Display::Block => BoxType::BlockBox(BoxProps {

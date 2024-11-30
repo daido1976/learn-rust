@@ -60,7 +60,7 @@ mod tests {
         fs::create_dir(dir_path.join("testdir")).unwrap();
 
         let mut buffer = Vec::new();
-        list_directory(&mut buffer, &dir_path).unwrap();
+        list_directory(&mut buffer, dir_path).unwrap();
 
         let output = String::from_utf8(buffer).unwrap();
         assert_eq!(output, "\u{1b}[34mtestdir\u{1b}[0m  testfile.txt\n");

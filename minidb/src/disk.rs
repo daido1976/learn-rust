@@ -33,6 +33,7 @@ impl DiskManager {
             .read(true)
             .write(true)
             .create(true)
+            .truncate(true)
             .open(heap_file_path)?;
         Self::new(heap_file)
     }
